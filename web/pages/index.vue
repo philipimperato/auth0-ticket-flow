@@ -15,12 +15,7 @@ const navigateToLogin = () => {
 
       <template #default>
         <div class="my-4">
-          <Button
-            label="Login with Auth0"
-            block
-            class="cursor-pointer"
-            @click="navigateToLogin"
-          />
+          <Button label="Login with Auth0" block class="cursor-pointer" @click="navigateToLogin" />
         </div>
       </template>
 

@@ -1,6 +1,13 @@
+<script setup lang="ts">
+useHead({
+  htmlAttrs: {
+    class: "font-primary"
+  }
+});
+</script>
+
 <template>
-  <div>
-    <NuxtRouteAnnouncer />
-    <NuxtWelcome />
-  </div>
+  <App>
+    <NuxtPage />
+  </App>
 </template>
