@@ -1,5 +1,9 @@
 @import "tailwindcss";
+<<<<<<< HEAD
 @import "@nuxt/ui-pro";
+=======
+@import "@nuxt/ui";
+>>>>>>> 8038b82 (feat(login-page): Install tailwind & Nuxt ui (#1))
 
 @theme {
   --font-primary: "Roboto Serif", "sans-serif";
