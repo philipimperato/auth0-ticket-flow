@@ -7,7 +7,11 @@ useHead({
 </script>
 
 <template>
-  <App>
-    <NuxtPage />
-  </App>
+  <UApp>
+    <NuxtLoadingIndicator />
+
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </UApp>
 </template>

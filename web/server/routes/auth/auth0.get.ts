@@ -1,9 +1,16 @@
 export default defineOAuthAuth0EventHandler({
   config: {},
   async onSuccess(event, { user, tokens }) {
-    console.log(event);
-    console.log(user);
-    console.log(tokens);
+    await setUserSession(event, {
+      user: {
+        sub: user.sub
+      },
+      secure: {
+        idToken: tokens.id_token
+      }
+    });
+
+    return sendRedirect(event, "/inviters");
   },
   onError(event, error) {
     console.error("Auth0 error:", error);
