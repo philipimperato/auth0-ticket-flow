@@ -8,16 +8,15 @@ var postgres = builder.AddPostgres("postgres", password: password)
 
 var db = postgres.AddDatabase("invite-flow");
 
-var api = builder.AddNpmApp("api", "../api", "dev")
-	.WithExternalHttpEndpoints()
-	.WithHttpsEndpoint(port: 5001, targetPort: 3000)
-	.WithReference(db)
-	.PublishAsDockerFile();
+// var api = builder.AddNpmApp("api", "../api", "dev")
+// 	.WithExternalHttpEndpoints()
+// 	.WithHttpsEndpoint(port: 5001, targetPort: 3333)
+// 	.WithReference(db)
+// 	.PublishAsDockerFile();
 
 builder.AddNpmApp("web", "../web", "dev")
 	.WithExternalHttpEndpoints()
 	.WithHttpsEndpoint(port: 5002, targetPort: 3000)
-	.WithReference(api)
 	.PublishAsDockerFile();
 	
 builder.Build().Run();

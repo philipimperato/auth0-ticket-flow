@@ -10,13 +10,13 @@ class UserSchema extends BaseSchema {
       table.string('last_name')
       table.string('email', 254).notNullable().unique()
       table.string('auth_id').notNullable()
-      table.timestamp('created_at').notNullable()
-      table.timestamp('updated_at').notNullable()
+      table.timestamp('created_at').notNullable().defaultTo('now()')
+      table.timestamp('updated_at').notNullable().defaultTo('now()')
     })
   }
 
   async down() {
-    this.schema.dropTable(this.tableName)
+    this.schema.withSchema('auth').dropTable(this.tableName)
   }
 }
 
