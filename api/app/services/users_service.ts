@@ -1,17 +1,8 @@
-import db from '@adonisjs/lucid/services/db'
+import type { UserCreateDto } from '../dtos/user.js'
+import User from '#models/user'
 
 export default class UserService {
-  private tableName: string = 'auth.users'
-
-  insert() {
-    return db
-      .table(this.tableName)
-      .insert({
-        first_name: 'John',
-        last_name: 'Doe',
-        email: 'john.doe@example2.com',
-        auth_id: '1234567890',
-      })
-      .returning('*')
+  create(user: UserCreateDto) {
+    return User.create(user)
   }
 }
