@@ -9,6 +9,6 @@ export default class UsersController {
   async create({ response }: HttpContext) {
     const user = await this.userService.insert()
 
-    return response.json({ user })
+    return response.json(user)
   }
 }

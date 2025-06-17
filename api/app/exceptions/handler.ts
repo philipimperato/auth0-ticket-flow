@@ -1,5 +1,7 @@
 import app from '@adonisjs/core/services/app'
 import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
+import { isUniqueConstraint, getUniqueConstraintMessage } from './postgres_exception_helper.js'
+import UniqueContraintException from './unique_contraint_exception.js'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -12,7 +14,12 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * The method is used for handling errors and returning
    * response to the client
    */
-  async handle(error: unknown, ctx: HttpContext) {
+  async handle(error: any, ctx: HttpContext) {
+    if (isUniqueConstraint(error)) {
+      const constraint = error.constraint
+      throw new UniqueContraintException(getUniqueConstraintMessage(constraint))
+    }
+
     return super.handle(error, ctx)
   }
 
