@@ -2,6 +2,8 @@ import { DateTime } from 'luxon'
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 
 export default class User extends BaseModel {
+  public static table = 'auth.users'
+
   @column({ isPrimary: true })
   declare id: number
 
@@ -13,6 +15,9 @@ export default class User extends BaseModel {
 
   @column()
   declare email: string
+
+  @column({ columnName: 'auth_id' })
+  declare authId: string
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
