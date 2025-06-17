@@ -9,7 +9,7 @@ export default class UserService {
       .insert({
         first_name: 'John',
         last_name: 'Doe',
-        email: 'john.doe@example.com',
+        email: 'john.doe@example2.com',
         auth_id: '1234567890',
       })
       .returning('*')
