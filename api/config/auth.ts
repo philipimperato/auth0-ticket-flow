@@ -1,16 +1,21 @@
 import { defineConfig } from '@adonisjs/auth'
-import { sessionGuard, sessionUserProvider } from '@adonisjs/auth/session'
 import type { InferAuthenticators, InferAuthEvents, Authenticators } from '@adonisjs/auth/types'
+import { Auth0Guard } from '#auth/guards/auth0'
+import env from '#start/env'
+import { Auth0UserProvider } from '#auth/providers/auth0_user_provider'
 
 const authConfig = defineConfig({
-  default: 'web',
+  default: 'auth0',
+
   guards: {
-    web: sessionGuard({
-      useRememberMeTokens: false,
-      provider: sessionUserProvider({
-        model: () => import('#models/user')
-      }),
-    }),
+    auth0: (ctx) => {
+      const provider = new Auth0UserProvider()
+
+      return new Auth0Guard(ctx, provider, {
+        domain: env.get('AUTH0_DOMAIN')!,
+        audience: env.get('AUTH0_AUDIENCE')!,
+      })
+    },
   },
 })
 

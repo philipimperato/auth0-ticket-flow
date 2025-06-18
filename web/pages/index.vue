@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: "empty" });
+definePageMeta({ layout: "empty", middleware: [] });
 
 const navigateToLogin = () => {
   window.location.href = "/auth/auth0";
