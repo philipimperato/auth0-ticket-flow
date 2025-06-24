@@ -1,23 +1,35 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
-class UserSchema extends BaseSchema {
-  protected tableName = 'users'
+export default class extends BaseSchema {
+  protected tableName = 'auth.users'
 
   async up() {
-    this.schema.withSchema('auth').createTable(this.tableName, (table) => {
-      table.increments('id')
-      table.string('first_name')
-      table.string('last_name')
-      table.string('email', 254).notNullable().unique()
+    this.schema.createTable(this.tableName, (table) => {
+      table.increments('id').primary()
+
+      table.string('first_name').notNullable()
+      table.string('last_name').notNullable()
+      table.string('email').notNullable().unique()
+      table.integer('client_id').unsigned().notNullable()
+
+      table.uuid('external_id')
+
+      table
+        .enum('status', ['new', 'invited', 'active', 'inactive', 'archived'])
+        .defaultTo('new')
+        .notNullable()
+
+      table.integer('role_id').unsigned().nullable()
       table.string('auth_id').notNullable()
-      table.timestamp('created_at').notNullable().defaultTo('now()')
-      table.timestamp('updated_at').notNullable().defaultTo('now()')
+      table.integer('invited_by').unsigned().nullable()
+      table.timestamp('invited_at').nullable()
+      table.timestamp('last_login_at').nullable()
+
+      table.timestamps(true, true)
     })
   }
 
   async down() {
-    this.schema.withSchema('auth').dropTable(this.tableName)
+    this.schema.raw('DROP TABLE IF EXISTS "auth"."users" CASCADE')
   }
 }
-
-export default UserSchema

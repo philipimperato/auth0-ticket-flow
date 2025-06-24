@@ -1,5 +1,4 @@
 import router from '@adonisjs/core/services/router'
 
-const UsersController = () => import('#controllers/users_controller')
-
-router.post('/users', [UsersController, 'create']).as('users.create')
+router.resource('roles', () => import('#controllers/roles_controller'))
+router.resource('users', () => import('#controllers/users_controller'))
