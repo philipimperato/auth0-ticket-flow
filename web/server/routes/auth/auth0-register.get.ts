@@ -1,5 +1,9 @@
 export default defineOAuthAuth0EventHandler({
-  config: {},
+  config: {
+    authorizationParams: {
+      screen_hint: "signup"
+    }
+  },
   async onSuccess(event, { user, tokens }) {
     await setUserSession(event, {
       user: {

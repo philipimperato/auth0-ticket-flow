@@ -36,6 +36,10 @@ const user = ref({
     alt: "Benjamin Canac"
   }
 });
+const logout = async () => {
+  await useUserSession().clear();
+  useRouter().push("/");
+};
 
 const items = computed<DropdownMenuItem[][]>(() => [
   [
@@ -178,7 +182,11 @@ const items = computed<DropdownMenuItem[][]>(() => [
   [
     {
       label: "Log out",
-      icon: "i-lucide-log-out"
+      icon: "i-lucide-log-out",
+      onSelect() {
+        logout();
+        navigateTo("/");
+      }
     }
   ]
 ]);
