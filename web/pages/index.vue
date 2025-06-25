@@ -1,5 +1,4 @@
 <script setup lang="ts">
-<<<<<<< HEAD
 definePageMeta({ layout: "empty", middleware: [] });
 
 const navigateToLogin = () => {
@@ -46,11 +45,4 @@ const navigateToRegister = () => {
       </template>
     </UCard>
   </div>
-=======
-definePageMeta({ layout: "empty" });
-</script>
-
-<template>
-  <h1 class="text-3xl font-primary">Test</h1>
->>>>>>> 8038b82 (feat(login-page): Install tailwind & Nuxt ui (#1))
 </template>
