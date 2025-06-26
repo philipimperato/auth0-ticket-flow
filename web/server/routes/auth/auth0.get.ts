@@ -1,23 +1,26 @@
+import type { H3Event } from "h3";
+
 export default defineOAuthAuth0EventHandler({
   config: {
-    authorizationParams: {
-      screen_hint: "signup"
-    }
+    scope: ["openid", "email"]
   },
-  async onSuccess(event, { user, tokens }) {
+  async onSuccess(event: H3Event, { user, tokens }: { user: any; tokens: any }) {
     await setUserSession(event, {
       user: {
-        sub: user.sub
+        authId: user.sub,
+        email: user.email
       },
-      secure: {
+      tokens: {
+        accessToken: tokens.access_token,
+        refreshToken: tokens.refresh_token,
         idToken: tokens.id_token
       }
     });
 
     return sendRedirect(event, "/inviters");
   },
-  onError(event, error) {
-    console.error("Auth0 error:", error);
+
+  onError(event: H3Event, error: any) {
     return sendRedirect(event, "/");
   }
 });

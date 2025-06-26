@@ -2,11 +2,11 @@
 definePageMeta({ layout: "empty", middleware: [] });
 
 const navigateToLogin = () => {
-  window.location.href = "/auth/auth0-login";
+  window.location.href = "/auth/auth0";
 };
 
 const navigateToRegister = () => {
-  window.location.href = "/auth/auth0-register";
+  window.location.href = "/auth/auth0-signup";
 };
 </script>
 
