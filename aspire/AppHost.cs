@@ -14,9 +14,9 @@ var db = postgres.AddDatabase("invite-flow");
 // 	.WithReference(db)
 // 	.PublishAsDockerFile();
 
-builder.AddNpmApp("web", "../web", "dev")
-	.WithExternalHttpEndpoints()
-	.WithHttpsEndpoint(port: 5002, targetPort: 3000)
-	.PublishAsDockerFile();
+// builder.AddNpmApp("web", "../web", "dev")
+// 	.WithExternalHttpEndpoints()
+// 	.WithHttpsEndpoint(port: 5002, targetPort: 3000)
+// 	.PublishAsDockerFile();
 	
 builder.Build().Run();

@@ -12,8 +12,7 @@ export default defineOAuthAuth0EventHandler({
       },
       tokens: {
         accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token,
-        idToken: tokens.id_token
+        refreshToken: tokens.refresh_token
       }
     });
 
@@ -21,6 +20,7 @@ export default defineOAuthAuth0EventHandler({
   },
 
   onError(event: H3Event, error: any) {
+    console.error("Auth0 error:", error);
     return sendRedirect(event, "/");
   }
 });
