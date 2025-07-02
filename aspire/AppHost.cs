@@ -1,22 +1,18 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var password = builder.AddParameter("db-password", secret: true);
+var dbPassword = builder.AddParameter("db-password", secret: true);
 
-var postgres = builder.AddPostgres("postgres", password: password)
-	.WithDataVolume()
-	.WithEndpoint("tcp", endpoint => endpoint.Port = 5432);
+var postgres = builder.AddPostgres("postgres", password: dbPassword)
+	.WithEndpoint("tcp", endpoint => endpoint.Port = 5432)
+    .WithDataVolume();
 
 var db = postgres.AddDatabase("invite-flow");
 
-// var api = builder.AddNpmApp("api", "../api", "dev")
-// 	.WithExternalHttpEndpoints()
-// 	.WithHttpsEndpoint(port: 5001, targetPort: 3333)
-// 	.WithReference(db)
-// 	.PublishAsDockerFile();
+builder.AddNpmApp("web", "../web", "dev")
+	.WithExternalHttpEndpoints()
+    .WithReference(db)
+	.WithEnvironment("API_URL", "http://localhost:3333")
+	.WithHttpsEndpoint(port: 5002, targetPort: 3000)
+	.PublishAsDockerFile();
 
-// builder.AddNpmApp("web", "../web", "dev")
-// 	.WithExternalHttpEndpoints()
-// 	.WithHttpsEndpoint(port: 5002, targetPort: 3000)
-// 	.PublishAsDockerFile();
-	
 builder.Build().Run();

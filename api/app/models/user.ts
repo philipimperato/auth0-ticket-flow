@@ -8,16 +8,16 @@ export default class User extends BaseModel {
   declare id: number
 
   @column()
-  declare firstName: string
+  declare firstName: string | null
 
   @column()
-  declare lastName: string
+  declare lastName: string | null
 
   @column()
   declare email: string
 
   @column()
-  declare clientId: string
+  declare clientId: number
 
   @column()
   declare externalId: string
@@ -35,7 +35,7 @@ export default class User extends BaseModel {
   declare status: 'new' | 'invited' | 'active' | 'inactive' | 'archived'
 
   @column()
-  declare roleId: number | null
+  declare roleId: number
 
   @column()
   declare authId: string
@@ -53,5 +53,5 @@ export default class User extends BaseModel {
   declare createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
+  declare updatedAt: DateTime
 }
