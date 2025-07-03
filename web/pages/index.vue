@@ -1,13 +1,12 @@
 <script setup lang="ts">
-<<<<<<< HEAD
 definePageMeta({ layout: "empty", middleware: [] });
 
 const navigateToLogin = () => {
-  window.location.href = "/auth/auth0-login";
+  window.location.href = "/auth/auth0";
 };
 
 const navigateToRegister = () => {
-  window.location.href = "/auth/auth0-register";
+  window.location.href = "/auth/auth0-signup";
 };
 </script>
 
@@ -46,11 +45,4 @@ const navigateToRegister = () => {
       </template>
     </UCard>
   </div>
-=======
-definePageMeta({ layout: "empty" });
-</script>
-
-<template>
-  <h1 class="text-3xl font-primary">Test</h1>
->>>>>>> 8038b82 (feat(login-page): Install tailwind & Nuxt ui (#1))
 </template>

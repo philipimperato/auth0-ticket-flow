@@ -1,4 +1,3 @@
-// app/auth/guards/jwt_guard.ts
 import { symbols, errors } from '@adonisjs/auth'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { GuardContract } from '@adonisjs/auth/types'
