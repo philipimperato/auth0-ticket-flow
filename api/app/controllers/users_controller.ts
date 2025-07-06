@@ -1,25 +1,27 @@
-import type { HttpContext } from '@adonisjs/core/http'
+import User from '#models/user'
 import UserService from '#services/users_service'
 import { inject } from '@adonisjs/core'
-import { createUserValidator } from '#validators/user'
-import User from '#models/user'
+import type { HttpContext } from '@adonisjs/core/http'
 
 @inject()
 export default class UsersController {
   constructor(public userService: UserService) {}
 
-  async store({ request, response, auth }: HttpContext) {
-    await auth.use('auth0').authenticate()
+  async index({ request, response, auth }: HttpContext) {
+    const sessionUser = auth.getUserOrFail()
 
-    const data = await request.validateUsing(createUserValidator)
-    const invitedUser = await User.findByOrFail('auth_id', data.authId)
+    if (sessionUser?.signUp) {
+      const user = await this.userService.signUp({
+        authId: sessionUser.sub,
+        email: sessionUser.email,
+      })
 
-    if (!invitedUser) {
-      return response.badRequest('User not found')
+      return response.json([user])
+    } else {
+      const filters = request.qs()
+      const users = await this.userService.findBy(filters)
+
+      return response.json(users)
     }
-
-    await invitedUser.merge({ email: data.email }).save()
-
-    return response.json(invitedUser)
   }
 }

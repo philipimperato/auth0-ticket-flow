@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import useAuthFetch from "~/server/use-auth-fetch";
+import use$Fetch from "~/server/use-fetch";
 
 export default defineOAuthAuth0EventHandler({
   config: {
@@ -7,6 +7,15 @@ export default defineOAuthAuth0EventHandler({
     audience: "adonis:dev:api"
   },
   async onSuccess(event: H3Event, { user, tokens }: { user: any; tokens: any }) {
+    const response = await use$Fetch("/users", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${tokens.access_token}`
+      }
+    });
+
+    console.log(response);
+
     await setUserSession(event, {
       user: {
         authId: user.sub,
@@ -15,13 +24,6 @@ export default defineOAuthAuth0EventHandler({
       tokens: {
         accessToken: tokens.access_token,
         refreshToken: tokens.refresh_token
-      }
-    });
-
-    await useAuthFetch(event, "/users", {
-      method: "POST",
-      body: {
-        email: user.email
       }
     });
 

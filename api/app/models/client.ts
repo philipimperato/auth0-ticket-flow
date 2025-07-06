@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeSave, column } from '@adonisjs/lucid/orm'
 
 export default class Client extends BaseModel {
   public static table = 'auth.clients'
@@ -11,6 +11,9 @@ export default class Client extends BaseModel {
   declare name: string
 
   @column()
+  declare slug: string
+
+  @column()
   declare externalId: string
 
   @column.dateTime({ autoCreate: true })
@@ -18,4 +21,11 @@ export default class Client extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @beforeSave()
+  public static async buildSlug(client: Client) {
+    if (client.name && !client.slug) {
+      client.slug = client.name.trim().toLowerCase().replace(/\s+/g, '-')
+    }
+  }
 }

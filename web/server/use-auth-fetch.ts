@@ -1,19 +1,6 @@
 import { UserSessionPayload } from "#auth-utils";
 import type { H3Event } from "h3";
-
-interface AuthFetchResponse<T = any> {
-  success: boolean;
-  data: T;
-}
-
-type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-
-interface AuthFetchOptions<T = any> {
-  method?: HttpMethod;
-  headers?: Record<string, string>;
-  body?: T;
-  query?: Record<string, string>;
-}
+import type { FetchOptions, FetchResponse } from "./types/use-fetch";
 
 /**
  * Authenticated fetch utility for server API requests
@@ -25,8 +12,8 @@ interface AuthFetchOptions<T = any> {
 const useAuthFetch = async <T = any>(
   event: H3Event,
   endpoint: string,
-  options?: AuthFetchOptions
-): Promise<AuthFetchResponse<T>> => {
+  options?: FetchOptions
+): Promise<FetchResponse<T>> => {
   const apiUrl = import.meta.env.API_URL;
   const endpointUrl = `${apiUrl}${endpoint}`;
   const _options = options || { method: "GET" };
@@ -42,15 +29,13 @@ const useAuthFetch = async <T = any>(
       }
     };
 
-    let $query = null;
-
     if (_options.method === "GET") {
-      $query = $fetch<AuthFetchResponse>(endpointUrl, {
+      return $fetch<FetchResponse<T>>(endpointUrl, {
         method: "get",
         headers
       });
     } else if (_options.method === "POST") {
-      $query = $fetch<AuthFetchResponse>(endpointUrl, {
+      return $fetch<FetchResponse<T>>(endpointUrl, {
         method: "post",
         body: _options.body,
         headers
@@ -61,8 +46,6 @@ const useAuthFetch = async <T = any>(
         statusMessage: "Method not allowed"
       });
     }
-
-    return $query;
   } catch (error: any) {
     console.log(error);
 
