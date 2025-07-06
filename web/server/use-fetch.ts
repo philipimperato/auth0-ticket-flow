@@ -1,9 +1,6 @@
 import type { FetchOptions, FetchResponse } from "./types/use-fetch";
 
-const use$Fetch = async <T = any>(
-  endpoint: string,
-  options?: FetchOptions
-): Promise<FetchResponse<T>> => {
+const use$Fetch = async <T = any>(endpoint: string, options?: FetchOptions): Promise<T[]> => {
   const apiUrl = import.meta.env.API_URL;
   const endpointUrl = `${apiUrl}${endpoint}`;
   const _options = options || { method: "GET" };
@@ -14,7 +11,7 @@ const use$Fetch = async <T = any>(
       "Content-Type": "application/json"
     };
 
-    return $fetch<FetchResponse<T>>(endpointUrl, {
+    return $fetch<T[]>(endpointUrl, {
       method: "get",
       headers
     });
