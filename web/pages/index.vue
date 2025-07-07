@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: "empty", middleware: [] });
+definePageMeta({ layout: "center-card", middleware: [] });
 
 const navigateToLogin = () => {
   window.location.href = "/auth/auth0";
