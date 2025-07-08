@@ -66,49 +66,58 @@ const finishSignup = (event: FormSubmitEvent<Schema>) => {
     :validate="validate"
     :schema="schema"
     :state="state"
-    class="space-y-4"
+    class="flex flex-col h-full w-full"
     @submit="finishSignup"
   >
-    <h1 class="text-2xl">Complete Sign up</h1>
+    <div class="max-w-3xl mx-auto">
+      <div class="flex-grow overflow-auto space-y-4 pb-24">
+        <h1 class="text-2xl">Complete Sign up</h1>
 
-    <UTimeline :items="items" size="lg">
-      <template #title="{ item }">
-        <h3 class="text-xl mb-0">{{ item.title }}</h3>
+        <USeparator class="mt-4 mb-12" />
 
-        <div class="flex flex-col gap-4 mt-4 w-full">
-          <template v-if="item.title === 'Profile Information'">
-            <div class="font-normal text-muted mb-1">Finish setting up your profile</div>
+        <UTimeline :items="items" size="lg">
+          <template #title="{ item }">
+            <h3 class="text-xl mb-0">{{ item.title }}</h3>
 
-            <UFormField label="Firstname" name="firstname">
-              <UInput
-                v-model="state.firstname"
-                label="Firstname"
-                class="w-full"
-                placeholder="Enter your firstname"
-                icon="i-lucide-user"
-              />
-            </UFormField>
-            <UFormField label="Lastname" name="lastname">
-              <UInput
-                class="w-full"
-                v-model="state.lastname"
-                label="Lastname"
-                placeholder="Enter your lastname"
-                icon="i-lucide-user"
-              />
-            </UFormField>
-            <UFormField label="Timezone" name="timezone">
-              <TimezoneSelect v-model="state.timezone" />
-            </UFormField>
+            <div class="flex flex-col gap-4 mt-4 w-full">
+              <template v-if="item.title === 'Profile Information'">
+                <div class="font-normal text-muted mb-1 -mt-2">Finish setting up your profile</div>
+
+                <UFormField label="Firstname" name="firstname">
+                  <UInput
+                    v-model="state.firstname"
+                    label="Firstname"
+                    class="w-full"
+                    placeholder="Enter your firstname"
+                    icon="i-lucide-user"
+                  />
+                </UFormField>
+                <UFormField label="Lastname" name="lastname">
+                  <UInput
+                    class="w-full"
+                    v-model="state.lastname"
+                    label="Lastname"
+                    placeholder="Enter your lastname"
+                    icon="i-lucide-user"
+                  />
+                </UFormField>
+                <UFormField label="Timezone" name="timezone">
+                  <TimezoneSelect v-model="state.timezone" />
+                </UFormField>
+              </template>
+
+              <template v-if="item.title === 'Select your plan'">
+                <PlanSelection :plans="plans" v-model="state.selectedPlan" />
+              </template>
+            </div>
           </template>
-
-          <template v-if="item.title === 'Select your plan'">
-            <PlanSelection :plans="plans" v-model="state.selectedPlan" />
-          </template>
+        </UTimeline>
+      </div>
+      <div class="fixed bottom-0 left-0 right-0 p-4 border-t border-gray-700 bg-gray-900 pr-4">
+        <div class="flex justify-end">
+          <UButton size="lg" label="Sign up" type="submit" color="primary" class="px-8" />
         </div>
-      </template>
-    </UTimeline>
-
-    <UButton size="xl" label="Save" block type="submit" class="cursor-pointer" color="primary" />
+      </div>
+    </div>
   </UForm>
 </template>

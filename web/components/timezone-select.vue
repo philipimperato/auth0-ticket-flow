@@ -70,15 +70,14 @@ const defaultTz = computed(() => {
   return found ? found.value : "America/New_York";
 });
 
-const selectedTimezone = computed({
-  get: () => timezone.value || defaultTz.value,
-  set: (value) => (timezone.value = value)
-});
+if (!timezone.value) {
+  timezone.value = defaultTz.value;
+}
 </script>
 
 <template>
   <USelect
-    v-model="selectedTimezone"
+    v-model="timezone!"
     value-key="value"
     value-label="label"
     :items="timezones"
