@@ -1,6 +1,6 @@
 import { UserSessionPayload } from "#auth-utils";
 import type { H3Event } from "h3";
-import type { FetchOptions, FetchResponse } from "./types/use-fetch";
+import type { FetchOptions } from "./types/use-fetch";
 
 /**
  * Authenticated fetch utility for server API requests
@@ -13,7 +13,7 @@ const useAuthFetch = async <T = any>(
   event: H3Event,
   endpoint: string,
   options?: FetchOptions
-): Promise<FetchResponse<T>> => {
+): Promise<T[]> => {
   const apiUrl = import.meta.env.API_URL;
   const endpointUrl = `${apiUrl}${endpoint}`;
   const _options = options || { method: "GET" };
@@ -30,12 +30,12 @@ const useAuthFetch = async <T = any>(
     };
 
     if (_options.method === "GET") {
-      return $fetch<FetchResponse<T>>(endpointUrl, {
+      return $fetch<T[]>(endpointUrl, {
         method: "get",
         headers
       });
     } else if (_options.method === "POST" || _options.method === "PATCH") {
-      return $fetch<FetchResponse<T>>(endpointUrl, {
+      return $fetch<T[]>(endpointUrl, {
         method: _options.method,
         body: _options.body,
         headers

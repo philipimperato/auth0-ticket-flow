@@ -21,12 +21,16 @@ export default defineOAuthAuth0EventHandler({
 
     if (isNewUser) {
       _user = {
-        authId: user.sub,
-        email: user.email,
-        status: authUser.status
+        email: user.email
       };
     } else {
-      _user = authUser;
+      _user = {
+        email: authUser.email,
+        firstName: authUser.firstName,
+        lastName: authUser.lastName,
+        timezone: authUser.timezone,
+        status: authUser.status
+      };
     }
 
     await setUserSession(event, {

@@ -1,16 +1,15 @@
 <script lang="ts" setup>
 import type { FormError, TimelineItem } from "@nuxt/ui";
 import * as v from "valibot";
-import type { FormSubmitEvent } from "@nuxt/ui";
-
-type Schema = v.InferOutput<typeof schema>;
 
 definePageMeta({
   layout: "center-card"
 });
 
+const { user, clear } = useUserSession();
+
 const logout = async () => {
-  await useUserSession().clear();
+  await clear();
   useRouter().push("/");
 };
 
@@ -60,7 +59,7 @@ const state = ref({
   selectedPlan: 0
 });
 
-const finishSignup = async (event: FormSubmitEvent<Schema>) => {
+const finishSignup = async () => {
   try {
     await $fetch("/api/users/signup", {
       method: "PATCH",
@@ -93,12 +92,25 @@ const finishSignup = async (event: FormSubmitEvent<Schema>) => {
           <template #title="{ item }">
             <h3 class="text-xl mb-0">{{ item.title }}</h3>
 
-            <div class="flex flex-col gap-4 mt-4 w-full">
+            <div class="flex flex-col gap-4 mt-4 w-full space-y-2">
               <template v-if="item.title === 'Profile Information'">
                 <div class="font-normal text-muted mb-1 -mt-2">Finish setting up your profile</div>
 
+                <UFormField label="Email" name="email">
+                  <UInput
+                    size="xl"
+                    color="primary"
+                    variant="subtle"
+                    :value="user?.email"
+                    class="w-full"
+                    disabled
+                    icon="i-lucide-mail"
+                  />
+                </UFormField>
+
                 <UFormField label="First Name" name="firstName">
                   <UInput
+                    size="xl"
                     v-model="state.firstName"
                     label="First name"
                     class="w-full"
@@ -108,6 +120,7 @@ const finishSignup = async (event: FormSubmitEvent<Schema>) => {
                 </UFormField>
                 <UFormField label="Last Name" name="lastName">
                   <UInput
+                    size="xl"
                     class="w-full"
                     v-model="state.lastName"
                     label="Last name"
@@ -116,7 +129,7 @@ const finishSignup = async (event: FormSubmitEvent<Schema>) => {
                   />
                 </UFormField>
                 <UFormField label="Timezone" name="timezone">
-                  <TimezoneSelect v-model="state.timezone" />
+                  <TimezoneSelect size="xl" v-model="state.timezone" />
                 </UFormField>
               </template>
 
