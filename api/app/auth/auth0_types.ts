@@ -13,7 +13,7 @@ export interface Auth0Payload {
 export interface Auth0UserInfo extends User {
   sub: string
   email: string
-  signUp?: boolean
+  createNewUser?: boolean
 }
 
 export type JwtGuardUser<RealUser> = {

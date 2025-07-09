@@ -1,26 +1,21 @@
 import { inject } from '@adonisjs/core'
 import User from '#models/user'
-import type { UserCreateDto } from '../dtos/user.js'
-import type { Auth0UserInfo } from '#auth/auth0_types'
-import { signUpValidator } from '#validators/user'
+import type { UserCreateDto, UserUpdateDto } from '../dtos/user.js'
+import { createUserValidator } from '#validators/user'
 import Role from '#models/role'
 import Client from '#models/client'
 
 @inject()
 export default class UserService {
-  create(user: UserCreateDto) {
-    return User.create(user)
-  }
-
   show(authId: string) {
-    return User.findByOrFail('auth_id', authId)
+    return User.findByOrFail('authId', authId)
   }
 
   findBy(filters: any) {
     return User.query().where(filters)
   }
 
-  async signUp(user: Pick<Auth0UserInfo, 'authId' | 'email'>) {
+  async create(user: UserCreateDto) {
     const role = await Role.findByOrFail('name', 'inviter')
 
     const client = await Client.create({
@@ -28,7 +23,7 @@ export default class UserService {
       externalId: crypto.randomUUID(),
     })
 
-    const validated = await signUpValidator.validate({
+    const validated = await createUserValidator.validate({
       ...user,
       status: 'new',
       clientId: client.id,
@@ -37,5 +32,13 @@ export default class UserService {
     })
 
     return User.create(validated)
+  }
+
+  async signUp(authId: string, updateDto: UserUpdateDto) {
+    const _user = await this.show(authId)
+
+    _user.merge(updateDto)
+
+    return _user.save()
   }
 }

@@ -16,6 +16,9 @@ export default class Client extends BaseModel {
   @column()
   declare externalId: string
 
+  @column()
+  declare package: string | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

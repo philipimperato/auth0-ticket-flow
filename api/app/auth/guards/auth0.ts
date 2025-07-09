@@ -4,7 +4,7 @@ import type { GuardContract } from '@adonisjs/auth/types'
 import type { Auth0Payload, JwtUserProviderContract } from '#auth/auth0_types'
 import jwt from 'jsonwebtoken'
 import jwksClient from 'jwks-rsa'
-import type { Auth0UserInfo } from '#auth/auth0_types'
+import User from '#models/user'
 
 interface Auth0GuardOptions {
   domain: string
@@ -13,7 +13,7 @@ interface Auth0GuardOptions {
   clockTolerance?: number
 }
 
-export class Auth0Guard<UserProvider extends JwtUserProviderContract<Auth0UserInfo>>
+export class Auth0Guard<UserProvider extends JwtUserProviderContract<User>>
   implements GuardContract<UserProvider[typeof symbols.PROVIDER_REAL_USER]>
 {
   declare [symbols.GUARD_KNOWN_EVENTS]: {}
@@ -227,7 +227,7 @@ export class Auth0Guard<UserProvider extends JwtUserProviderContract<Auth0UserIn
             guardDriverName: this.driverName,
           })
         } else {
-          userInfo.getOriginal().signUp = true
+          this.#ctx.session.put('createNewUser', true)
         }
 
         providerUser = userInfo

@@ -41,6 +41,9 @@ export default class User extends BaseModel {
   declare authId: string
 
   @column()
+  declare timezone: string
+
+  @column()
   declare invitedBy: number | null
 
   @column()

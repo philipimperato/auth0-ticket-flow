@@ -5,7 +5,7 @@ declare module "#auth-utils" {
       email: string;
       status: string;
     };
-    tokens: {
+    secure: {
       accessToken: string;
       refreshToken: string;
     };

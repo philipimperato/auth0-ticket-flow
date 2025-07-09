@@ -19,7 +19,12 @@ export class Auth0UserProvider implements JwtUserProviderContract<User> {
     const auth0Service = new Auth0Service()
     const auth0User = await auth0Service.getUserInfo(accessToken, userInfoUrl)
 
-    return auth0User ? this.createUserForGuard(auth0User) : null
+    return auth0User
+      ? this.createUserForGuard({
+          authId: auth0User.sub,
+          email: auth0User.email,
+        } as User)
+      : null
   }
 
   async createUserForGuard(user: User): Promise<JwtGuardUser<User>> {

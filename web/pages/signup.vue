@@ -9,6 +9,11 @@ definePageMeta({
   layout: "center-card"
 });
 
+const logout = async () => {
+  await useUserSession().clear();
+  useRouter().push("/");
+};
+
 const items = [
   {
     title: "Profile Information",
@@ -34,30 +39,39 @@ const plans = [
 ];
 
 const schema = v.object({
-  firstname: v.string(),
-  lastname: v.string(),
+  firstName: v.string(),
+  lastName: v.string(),
   timezone: v.nullable(v.string()),
   selectedPlan: v.number()
 });
 
 const validate = (state: any): FormError[] => {
   const errors = [];
-  if (!state.firstname) errors.push({ name: "firstname", message: "Required" });
-  if (!state.lastname) errors.push({ name: "lastname", message: "Required" });
+  if (!state.firstName) errors.push({ name: "firstName", message: "Required" });
+  if (!state.lastName) errors.push({ name: "lastName", message: "Required" });
   if (!state.timezone) errors.push({ name: "timezone", message: "Required" });
-  if (!state.selectedPlan) errors.push({ name: "selectedPlan", message: "Required" });
   return errors;
 };
 
 const state = ref({
-  firstname: "",
-  lastname: "",
+  firstName: "",
+  lastName: "",
   timezone: null,
   selectedPlan: 0
 });
 
-const finishSignup = (event: FormSubmitEvent<Schema>) => {
-  console.log(state);
+const finishSignup = async (event: FormSubmitEvent<Schema>) => {
+  try {
+    await $fetch("/api/users/signup", {
+      method: "PATCH",
+      body: state.value
+    });
+
+    navigateTo("/");
+  } catch (error) {
+    console.error("Patch failed:", error);
+    throw error;
+  }
 };
 </script>
 
@@ -71,7 +85,7 @@ const finishSignup = (event: FormSubmitEvent<Schema>) => {
   >
     <div class="max-w-3xl mx-auto">
       <div class="flex-grow overflow-auto space-y-4 pb-24">
-        <h1 class="text-2xl">Complete Sign up</h1>
+        <h1 class="mt-4 text-2xl">Complete Sign up</h1>
 
         <USeparator class="mt-4 mb-12" />
 
@@ -83,21 +97,21 @@ const finishSignup = (event: FormSubmitEvent<Schema>) => {
               <template v-if="item.title === 'Profile Information'">
                 <div class="font-normal text-muted mb-1 -mt-2">Finish setting up your profile</div>
 
-                <UFormField label="Firstname" name="firstname">
+                <UFormField label="First Name" name="firstName">
                   <UInput
-                    v-model="state.firstname"
-                    label="Firstname"
+                    v-model="state.firstName"
+                    label="First name"
                     class="w-full"
-                    placeholder="Enter your firstname"
+                    placeholder="Enter your first name"
                     icon="i-lucide-user"
                   />
                 </UFormField>
-                <UFormField label="Lastname" name="lastname">
+                <UFormField label="Last Name" name="lastName">
                   <UInput
                     class="w-full"
-                    v-model="state.lastname"
-                    label="Lastname"
-                    placeholder="Enter your lastname"
+                    v-model="state.lastName"
+                    label="Last name"
+                    placeholder="Enter your last name"
                     icon="i-lucide-user"
                   />
                 </UFormField>
@@ -114,8 +128,16 @@ const finishSignup = (event: FormSubmitEvent<Schema>) => {
         </UTimeline>
       </div>
       <div class="fixed bottom-0 left-0 right-0 p-4 border-t border-gray-700 bg-gray-900 pr-4">
-        <div class="flex justify-end">
-          <UButton size="lg" label="Sign up" type="submit" color="primary" class="px-8" />
+        <div class="flex justify-between">
+          <UButton
+            size="xl"
+            label="Cancel"
+            type="button"
+            color="secondary"
+            class="px-8"
+            @click="logout"
+          />
+          <UButton size="xl" label="Sign up" type="submit" color="primary" class="px-8" />
         </div>
       </div>
     </div>

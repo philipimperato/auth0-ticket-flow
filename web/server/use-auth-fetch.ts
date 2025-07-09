@@ -19,12 +19,12 @@ const useAuthFetch = async <T = any>(
   const _options = options || { method: "GET" };
 
   try {
-    const { tokens } = (await getUserSession(event)) as unknown as UserSessionPayload;
+    const { secure } = (await getUserSession(event)) as unknown as UserSessionPayload;
 
     const headers = {
       ..._options.headers,
       ...{
-        Authorization: `Bearer ${tokens.accessToken}`,
+        Authorization: `Bearer ${secure.accessToken}`,
         "Content-Type": "application/json"
       }
     };
@@ -34,9 +34,9 @@ const useAuthFetch = async <T = any>(
         method: "get",
         headers
       });
-    } else if (_options.method === "POST") {
+    } else if (_options.method === "POST" || _options.method === "PATCH") {
       return $fetch<FetchResponse<T>>(endpointUrl, {
-        method: "post",
+        method: _options.method,
         body: _options.body,
         headers
       });

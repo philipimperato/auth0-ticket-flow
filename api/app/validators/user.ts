@@ -1,6 +1,6 @@
 import vine from '@vinejs/vine'
 
-export const signUpValidator = vine.compile(
+export const createUserValidator = vine.compile(
   vine.object({
     authId: vine
       .string()
@@ -14,9 +14,11 @@ export const signUpValidator = vine.compile(
   })
 )
 
-export const patchUserValidator = vine.compile(
+export const signUpValidator = vine.compile(
   vine.object({
-    email: vine.string().trim().email(),
-    status: vine.enum(['new', 'invited', 'active', 'inactive', 'archived']),
+    firstName: vine.string().trim(),
+    lastName: vine.string().trim(),
+    timezone: vine.string().trim(),
+    status: vine.enum(['active']),
   })
 )

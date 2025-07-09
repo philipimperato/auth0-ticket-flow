@@ -9,6 +9,7 @@ export default class extends BaseSchema {
 
       table.string('name').notNullable()
       table.string('slug').unique().notNullable()
+      table.string('package').nullable()
 
       table.uuid('external_id')
 
