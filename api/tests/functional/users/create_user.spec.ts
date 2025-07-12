@@ -1,13 +1,7 @@
 import { test } from '@japa/runner'
 import User from '#models/user'
-import testUtils from '@adonisjs/core/services/test_utils'
 
-test.group('User Create', (group) => {
-  group.each.setup(() => {
-    testUtils.db().truncate()
-    testUtils.db().seed()
-  })
-
+test.group('User Create', () => {
   const userWithDefaults = {
     email: 'test@example.com',
     clientId: 1,
@@ -43,6 +37,7 @@ test.group('User Create', (group) => {
     } catch (error) {
       errorThrown = true
       assert.equal(error.code, '23505')
+      assert.equal(error.constraint, 'auth_users_email_unique')
     }
 
     assert.isTrue(errorThrown, 'Expected unique constraint violation')
