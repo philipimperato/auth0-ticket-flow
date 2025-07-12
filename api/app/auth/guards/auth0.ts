@@ -1,9 +1,10 @@
 import { symbols, errors } from '@adonisjs/auth'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { GuardContract } from '@adonisjs/auth/types'
-import type { JwtUserProviderContract } from '#auth/auth0_types'
+import type { Auth0Payload, JwtUserProviderContract } from '#auth/auth0_types'
 import jwt from 'jsonwebtoken'
 import jwksClient from 'jwks-rsa'
+import User from '#models/user'
 
 interface Auth0GuardOptions {
   domain: string
@@ -12,16 +13,7 @@ interface Auth0GuardOptions {
   clockTolerance?: number
 }
 
-interface Auth0Payload {
-  sub: string
-  aud: string | string[]
-  iss: string
-  exp: number
-  iat: number
-  [key: string]: any
-}
-
-export class Auth0Guard<UserProvider extends JwtUserProviderContract<unknown>>
+export class Auth0Guard<UserProvider extends JwtUserProviderContract<User>>
   implements GuardContract<UserProvider[typeof symbols.PROVIDER_REAL_USER]>
 {
   declare [symbols.GUARD_KNOWN_EVENTS]: {}
@@ -50,7 +42,7 @@ export class Auth0Guard<UserProvider extends JwtUserProviderContract<unknown>>
       jwksUri: `https://${this.#options.domain}/.well-known/jwks.json`,
       cache: true,
       cacheMaxEntries: 5,
-      cacheMaxAge: 600000, // 10 minutes
+      cacheMaxAge: 600000,
       rateLimit: true,
       jwksRequestsPerMinute: 5,
     })
@@ -64,15 +56,14 @@ export class Auth0Guard<UserProvider extends JwtUserProviderContract<unknown>>
     this.authenticationAttempted = true
 
     try {
-      const token = this.#extractToken()
-      const payload = await this.#verifyToken(token)
-      const user = await this.#findUser(payload.sub)
+      const accessToken = this.#extractToken()
+      const payload = await this.#verifyToken(accessToken)
+      const user = await this.#findUser(payload)
 
       this.user = user.getOriginal()
       this.isAuthenticated = true
       return this.getUserOrFail()
     } catch (error) {
-      // Reset authentication state on failure
       this.user = undefined
       this.isAuthenticated = false
       throw error
@@ -220,14 +211,26 @@ export class Auth0Guard<UserProvider extends JwtUserProviderContract<unknown>>
     })
   }
 
-  async #findUser(userId: string) {
+  async #findUser(payload: Auth0Payload) {
     try {
-      const providerUser = await this.#userProvider.findById(userId)
+      let providerUser
+
+      providerUser = await this.#userProvider.findByToken(payload.sub)
 
       if (!providerUser) {
-        throw new errors.E_UNAUTHORIZED_ACCESS('User not found', {
-          guardDriverName: this.driverName,
-        })
+        const accessToken = this.#extractToken()
+        const userInfoUrl = `https://${this.#options.domain}/userinfo`
+        const userInfo = await this.#userProvider.findByUserInfo(accessToken, userInfoUrl)
+
+        if (!userInfo) {
+          throw new errors.E_UNAUTHORIZED_ACCESS('User not found from /userinfo', {
+            guardDriverName: this.driverName,
+          })
+        } else {
+          await this.#userProvider.createLocalUser(userInfo.getOriginal())
+        }
+
+        providerUser = userInfo
       }
 
       return providerUser

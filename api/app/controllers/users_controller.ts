@@ -1,25 +1,36 @@
-import type { HttpContext } from '@adonisjs/core/http'
 import UserService from '#services/users_service'
+import ClientsService from '#services/clients_service'
 import { inject } from '@adonisjs/core'
-import { createUserValidator } from '#validators/user'
-import User from '#models/user'
+import type { HttpContext } from '@adonisjs/core/http'
+import { UserUpdateDto } from '../dtos/user.js'
+import { signUpValidator } from '#validators/user'
 
 @inject()
 export default class UsersController {
-  constructor(public userService: UserService) {}
+  constructor(
+    public userService: UserService,
+    public clientsService: ClientsService
+  ) {}
 
-  async store({ request, response, auth }: HttpContext) {
-    await auth.use('auth0').authenticate()
+  async index({ request, response }: HttpContext) {
+    const filters = request.qs()
+    const users = await this.userService.findBy(filters)
 
-    const data = await request.validateUsing(createUserValidator)
-    const invitedUser = await User.findByOrFail('auth_id', data.authId)
+    return response.json(users)
+  }
 
-    if (!invitedUser) {
-      return response.badRequest('User not found')
-    }
+  async signUp({ request, response, auth }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const body = request.body() as UserUpdateDto & { selectedPlan: string }
+    const { selectedPlan, ...signUpData } = body
 
-    await invitedUser.merge({ email: data.email }).save()
+    signUpData.status = 'active'
 
-    return response.json(invitedUser)
+    const validated = await signUpValidator.validate(signUpData)
+    const signedUp = await this.userService.signUp(user.authId, validated)
+
+    await this.clientsService.update(user.clientId, selectedPlan)
+
+    return response.json(signedUp)
   }
 }

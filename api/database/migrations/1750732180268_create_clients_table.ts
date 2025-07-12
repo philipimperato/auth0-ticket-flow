@@ -6,7 +6,10 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
+
       table.string('name').notNullable()
+      table.string('slug').unique().notNullable()
+      table.string('package').nullable()
 
       table.uuid('external_id')
 
@@ -15,6 +18,6 @@ export default class extends BaseSchema {
   }
 
   async down() {
-    this.schema.dropTable(this.tableName)
+    this.schema.raw('DROP TABLE IF EXISTS "auth"."clients" CASCADE')
   }
 }

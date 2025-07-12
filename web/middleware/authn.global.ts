@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware((to) => {
-  const { loggedIn } = useUserSession();
+  const { user, loggedIn } = useUserSession();
 
   if (to.path === "/") {
     return;
@@ -7,5 +7,9 @@ export default defineNuxtRouteMiddleware((to) => {
 
   if (!loggedIn.value) {
     return navigateTo("/");
+  }
+
+  if (user.value?.status === "new" && to.path !== "/signup") {
+    return navigateTo("/signup");
   }
 });

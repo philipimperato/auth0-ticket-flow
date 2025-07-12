@@ -1,5 +1,6 @@
 import type { H3Event } from "h3";
-import useAuthFetch from "~/server/use-auth-fetch";
+import use$Fetch from "~/server/use-fetch";
+import type { User } from "#auth-utils";
 
 export default defineOAuthAuth0EventHandler({
   config: {
@@ -7,25 +8,40 @@ export default defineOAuthAuth0EventHandler({
     audience: "adonis:dev:api"
   },
   async onSuccess(event: H3Event, { user, tokens }: { user: any; tokens: any }) {
-    await setUserSession(event, {
-      user: {
-        authId: user.sub,
+    const response = await use$Fetch<User>("/users", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${tokens.access_token}`
+      }
+    });
+    const authUser = response[0];
+    const isNewUser = authUser.status === "new";
+
+    let _user;
+
+    if (isNewUser) {
+      _user = {
         email: user.email
-      },
-      tokens: {
+      };
+    } else {
+      _user = {
+        email: authUser.email,
+        firstName: authUser.firstName,
+        lastName: authUser.lastName,
+        timezone: authUser.timezone,
+        status: authUser.status
+      };
+    }
+
+    await setUserSession(event, {
+      user: _user,
+      secure: {
         accessToken: tokens.access_token,
         refreshToken: tokens.refresh_token
       }
     });
 
-    await useAuthFetch(event, "/users", {
-      method: "POST",
-      body: {
-        email: user.email
-      }
-    });
-
-    return sendRedirect(event, "/inviters");
+    return sendRedirect(event, isNewUser ? "/signup" : "/inviters");
   },
 
   onError(event: H3Event, error: any) {

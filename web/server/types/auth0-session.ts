@@ -1,10 +1,7 @@
 declare module "#auth-utils" {
   interface UserSessionPayload {
-    user: {
-      sub: string;
-      email: string;
-    };
-    tokens: {
+    user: User;
+    secure: {
       accessToken: string;
       refreshToken: string;
     };

@@ -1,50 +1,54 @@
-import { symbols, errors } from '@adonisjs/auth'
-import type { JwtUserProviderContract, JwtGuardUser } from '#auth/auth0_types'
+import { errors, symbols } from '@adonisjs/auth'
+import type { JwtUserProviderContract, JwtGuardUser, Auth0UserInfo } from '#auth/auth0_types'
 import User from '#models/user'
-import Client from '#models/client'
-import Role from '#models/role'
+import Auth0Service from '#auth/utils/auth0_service'
+import UserService from '#services/users_service'
 
 export class Auth0UserProvider implements JwtUserProviderContract<User> {
   declare [symbols.PROVIDER_REAL_USER]: User
 
-  async findById(auth0Id: string): Promise<JwtGuardUser<User>> {
-    let user = await User.findBy('auth_id', auth0Id)
+  constructor(public userService: UserService) {}
 
-    /*  the jwt has validated, will secure this later - possibly with 
-        a jwt or guid from nuxt 3 */
-    if (!user) {
-      const role = await Role.findByOrFail('name', 'system')
+  async findByToken(auth0Sub: string): Promise<JwtGuardUser<User> | null> {
+    let user = await User.findBy('auth_id', auth0Sub)
 
-      // Demo Client
-      try {
-        const client = await Client.create({
-          name: 'Pure Life',
-          externalId: crypto.randomUUID(),
-        })
-        const _user = await User.create({
-          authId: auth0Id,
-          email: `${auth0Id}@example.com`,
-          externalId: crypto.randomUUID(),
-          status: 'new',
-          clientId: client.id,
-          roleId: role.id,
-        })
+    return user ? this.createUserForGuard(user) : null
+  }
 
-        user = _user
-      } catch (error) {
-        throw new errors.E_UNAUTHORIZED_ACCESS('User not authenticated', {
-          guardDriverName: 'auth0',
-        })
-      }
-    }
+  async findByUserInfo(
+    accessToken: string,
+    userInfoUrl: string
+  ): Promise<JwtGuardUser<User> | null> {
+    const auth0Service = new Auth0Service()
+    const auth0User = await auth0Service.getUserInfo(accessToken, userInfoUrl)
 
-    return this.createUserForGuard(user)
+    return auth0User
+      ? this.createUserForGuard({
+          authId: auth0User.sub,
+          email: auth0User.email,
+        } as User)
+      : null
   }
 
   async createUserForGuard(user: User): Promise<JwtGuardUser<User>> {
     return {
       getId: () => user.authId,
       getOriginal: () => user,
+    }
+  }
+
+  async createLocalUser(userInfo: User): Promise<JwtGuardUser<User>> {
+    try {
+      const user = await this.userService.create({
+        authId: userInfo.authId,
+        email: userInfo.email,
+      })
+
+      return await this.createUserForGuard(user)
+    } catch (error) {
+      throw new errors.E_UNAUTHORIZED_ACCESS('Failed to create local user', {
+        guardDriverName: 'auth0',
+      })
     }
   }
 }
