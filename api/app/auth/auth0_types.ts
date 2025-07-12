@@ -10,10 +10,9 @@ export interface Auth0Payload {
   [key: string]: any
 }
 
-export interface Auth0UserInfo extends User {
+export interface Auth0UserInfo {
   sub: string
   email: string
-  createNewUser?: boolean
 }
 
 export type JwtGuardUser<RealUser> = {
@@ -24,7 +23,8 @@ export type JwtGuardUser<RealUser> = {
 export interface JwtUserProviderContract<RealUser> {
   [symbols.PROVIDER_REAL_USER]: RealUser
 
-  createUserForGuard(user: RealUser): Promise<JwtGuardUser<RealUser>>
   findByToken(auth0Sub: string): Promise<JwtGuardUser<RealUser> | null>
-  findByUserInfo(accessToken: string, userInfoUrl: string): Promise<JwtGuardUser<RealUser> | null>
+  findByUserInfo(accessToken: string, userInfoUrl: string): Promise<JwtGuardUser<User> | null>
+  createUserForGuard(user: RealUser): Promise<JwtGuardUser<RealUser>>
+  createLocalUser(user: User): Promise<JwtGuardUser<User>>
 }

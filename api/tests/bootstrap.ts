@@ -13,7 +13,13 @@ import testUtils from '@adonisjs/core/services/test_utils'
  * Configure Japa plugins in the plugins array.
  * Learn more - https://japa.dev/docs/runner-config#plugins-optional
  */
-export const plugins: Config['plugins'] = [assert(), apiClient(), pluginAdonisJS(app)]
+export const plugins: Config['plugins'] = [
+  assert(),
+  apiClient({
+    baseURL: `http://${process.env.HOST}:${process.env.PORT}`,
+  }),
+  pluginAdonisJS(app),
+]
 
 /**
  * Configure lifecycle function to run before and after all the
@@ -32,7 +38,7 @@ export const runnerHooks: Required<Pick<Config, 'setup' | 'teardown'>> = {
  * Learn more - https://japa.dev/docs/test-suites#lifecycle-hooks
  */
 export const configureSuite: Config['configureSuite'] = (suite) => {
-  if (['browser', 'functional', 'e2e'].includes(suite.name)) {
+  if (['functional', 'e2e'].includes(suite.name)) {
     return suite.setup(() => testUtils.httpServer().start())
   }
 }

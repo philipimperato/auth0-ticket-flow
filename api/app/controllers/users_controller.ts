@@ -12,23 +12,11 @@ export default class UsersController {
     public clientsService: ClientsService
   ) {}
 
-  async index({ request, response, auth, session }: HttpContext) {
-    const sessionUser = auth.getUserOrFail()
-    const createNewUser = session.pull('createNewUser')
+  async index({ request, response }: HttpContext) {
+    const filters = request.qs()
+    const users = await this.userService.findBy(filters)
 
-    if (createNewUser) {
-      const user = await this.userService.create({
-        authId: sessionUser.authId,
-        email: sessionUser.email,
-      })
-
-      return response.json([user])
-    } else {
-      const filters = request.qs()
-      const users = await this.userService.findBy(filters)
-
-      return response.json(users)
-    }
+    return response.json(users)
   }
 
   async signUp({ request, response, auth }: HttpContext) {

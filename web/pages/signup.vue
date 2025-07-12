@@ -44,6 +44,8 @@ const schema = v.object({
   selectedPlan: v.number()
 });
 
+const data = await $fetch("/api/session");
+
 const validate = (state: any): FormError[] => {
   const errors = [];
   if (!state.firstName) errors.push({ name: "firstName", message: "Required" });
@@ -84,7 +86,7 @@ const finishSignup = async () => {
   >
     <div class="max-w-3xl mx-auto">
       <div class="flex-grow overflow-auto space-y-4 pb-24">
-        <h1 class="mt-4 text-2xl">Complete Sign up</h1>
+        <h1 class="mt-4 text-2xl">Complete Sign up, {{ user?.firstName }}</h1>
 
         <USeparator class="mt-4 mb-12" />
 

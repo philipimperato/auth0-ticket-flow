@@ -223,11 +223,11 @@ export class Auth0Guard<UserProvider extends JwtUserProviderContract<User>>
         const userInfo = await this.#userProvider.findByUserInfo(accessToken, userInfoUrl)
 
         if (!userInfo) {
-          throw new errors.E_UNAUTHORIZED_ACCESS('User not found', {
+          throw new errors.E_UNAUTHORIZED_ACCESS('User not found from /userinfo', {
             guardDriverName: this.driverName,
           })
         } else {
-          this.#ctx.session.put('createNewUser', true)
+          await this.#userProvider.createLocalUser(userInfo.getOriginal())
         }
 
         providerUser = userInfo
