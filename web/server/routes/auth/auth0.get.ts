@@ -15,6 +15,8 @@ export default defineOAuthAuth0EventHandler({
       }
     });
     const authUser = response[0];
+
+    console.log(authUser);
     const isNewUser = authUser.status === "new";
 
     let _user;

@@ -1,10 +1,13 @@
 import { symbols, errors } from '@adonisjs/auth'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { GuardContract } from '@adonisjs/auth/types'
-import type { Auth0Payload, JwtUserProviderContract } from '#auth/auth0_types'
+import type { Auth0Payload, JwtUserProviderContract, UserInfo } from '#auth/auth0_types'
 import jwt from 'jsonwebtoken'
 import jwksClient from 'jwks-rsa'
 import User from '#models/user'
+import UserService from '#services/users_service'
+import Role from '#models/role'
+import Client from '#models/client'
 
 interface Auth0GuardOptions {
   domain: string
@@ -227,10 +230,8 @@ export class Auth0Guard<UserProvider extends JwtUserProviderContract<User>>
             guardDriverName: this.driverName,
           })
         } else {
-          await this.#userProvider.createLocalUser(userInfo.getOriginal())
+          providerUser = await this.#userProvider.createLocalUser(userInfo.getOriginal())
         }
-
-        providerUser = userInfo
       }
 
       return providerUser

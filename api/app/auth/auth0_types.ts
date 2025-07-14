@@ -15,6 +15,11 @@ export interface Auth0UserInfo {
   email: string
 }
 
+export type UserInfo = Pick<User, 'authId' | 'email'>
+
+export type UserGuard = Pick<User, 'authId' | 'email'> &
+  Partial<Pick<User, 'firstName' | 'lastName' | 'clientId'>>
+
 export type JwtGuardUser<RealUser> = {
   getId(): string | number | BigInt
   getOriginal(): RealUser
@@ -24,7 +29,7 @@ export interface JwtUserProviderContract<RealUser> {
   [symbols.PROVIDER_REAL_USER]: RealUser
 
   findByToken(auth0Sub: string): Promise<JwtGuardUser<RealUser> | null>
-  findByUserInfo(accessToken: string, userInfoUrl: string): Promise<JwtGuardUser<User> | null>
+  findByUserInfo(accessToken: string, userInfoUrl: string): Promise<JwtGuardUser<UserInfo> | null>
   createUserForGuard(user: RealUser): Promise<JwtGuardUser<RealUser>>
-  createLocalUser(user: User): Promise<JwtGuardUser<User>>
+  createLocalUser(user: UserInfo): Promise<JwtGuardUser<User>>
 }

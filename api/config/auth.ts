@@ -2,7 +2,7 @@ import { defineConfig } from '@adonisjs/auth'
 import type { InferAuthenticators, InferAuthEvents, Authenticators } from '@adonisjs/auth/types'
 import { Auth0Guard } from '#auth/guards/auth0'
 import env from '#start/env'
-import { Auth0UserProvider } from '#auth/providers/auth0_user_provider'
+import Auth0UserProvider from '#auth/providers/auth0_user_provider'
 
 const authConfig = defineConfig({
   default: 'auth0',
