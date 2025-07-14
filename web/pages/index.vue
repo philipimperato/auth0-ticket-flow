@@ -1,48 +1,49 @@
 <script setup lang="ts">
 definePageMeta({ layout: "center-card", middleware: [] });
 
-const navigateToLogin = () => {
-  window.location.href = "/auth/auth0";
-};
-
-const navigateToRegister = () => {
-  window.location.href = "/auth/auth0-signup";
-};
+const open = ref(false);
+const plans = ref([
+  {
+    title: "Solo",
+    description: "Tailored for indie hackers.",
+    price: "$249",
+    features: ["One developer", "Lifetime access"],
+    button: {
+      label: "Buy now"
+    }
+  },
+  {
+    title: "Startup",
+    description: "Best suited for small teams.",
+    price: "$499",
+    features: ["Up to 5 developers", "Everything in Solo"],
+    button: {
+      label: "Buy now",
+      onClick: () => {
+        open.value = true;
+      }
+    }
+  },
+  {
+    title: "Organization",
+    description: "Ideal for larger teams and organizations.",
+    price: "$999",
+    features: ["Up to 20 developers", "Everything in Startup"],
+    button: {
+      label: "Buy now"
+    }
+  }
+]);
 </script>
 
 <template>
-  <div class="flex min-h-screen items-center justify-center">
-    <UCard
-      class="hover:ring-2 ring-primary/25 shadow-primary/10 shadow-xl border border-primary/25"
-    >
-      <template #header>
-        <NuxtImg src="/logo.png" class="mx-auto w-30 h-30 mt-8" />
-        <h1 class="text-2xl my-8">Welcome to Auth0 invite flow</h1>
-      </template>
+  <UPricingPlans :plans="plans" />
 
-      <template #default>
-        <div class="my-4">
-          <UButton label="Login with Auth0" block class="cursor-pointer" @click="navigateToLogin" />
-        </div>
-
-        <USeparator type="dashed" label="or" class="my-8" />
-
-        <div class="my-4">
-          <UButton
-            label="Register with Auth0"
-            block
-            variant="outline"
-            class="cursor-pointer"
-            @click="navigateToRegister"
-          />
-        </div>
-      </template>
-
-      <template #footer>
-        <div class="w-full flex items-center justify-center">
-          <span class="text-xs text-gray-400">Powered by Auth0 &amp; Nuxt 3</span>
-        </div>
-      </template>
-    </UCard>
-  </div>
+  <USlideover v-model:open="open" :dismissible="false">
+    <template #content>
+      <div class="overflow-y-scroll">
+        <SignUpForm @close-slideover="open = false" />
+      </div>
+    </template>
+  </USlideover>
 </template>

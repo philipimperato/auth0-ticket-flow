@@ -15,5 +15,15 @@ export default defineNuxtConfig({
       weights: [400, 700]
     }
   },
+  components: {
+    global: true,
+    dirs: [
+      {
+        path: "components/forms",
+        prefix: ""
+      },
+      "components"
+    ]
+  },
   css: ["~/assets/css/main.css"]
 });
