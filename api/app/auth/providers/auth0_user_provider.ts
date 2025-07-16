@@ -6,22 +6,21 @@ import Role from '#models/role'
 import Client from '#models/client'
 import { pick } from 'lodash'
 
-export default class Auth0UserProvider implements JwtUserProviderContract<UserGuard> {
-  declare [symbols.PROVIDER_REAL_USER]: UserGuard
+export default class Auth0UserProvider implements JwtUserProviderContract<User> {
+  declare [symbols.PROVIDER_REAL_USER]: User
 
   constructor() {}
 
-  async findByToken(auth0Sub: string): Promise<JwtGuardUser<UserGuard> | null> {
+  async findByToken(auth0Sub: string): Promise<JwtGuardUser<User> | null> {
     const user = await User.findBy('auth_id', auth0Sub)
-    const _user = pick(user, ['authId', 'email', 'firstName', 'lastName']) as UserGuard
 
-    return user ? this.createUserForGuard(_user) : null
+    return user ? this.createUserForGuard(user) : null
   }
 
   async findByUserInfo(
     accessToken: string,
     userInfoUrl: string
-  ): Promise<JwtGuardUser<UserGuard> | null> {
+  ): Promise<JwtGuardUser<User> | null> {
     const auth0Service = new Auth0Service()
     const auth0User = await auth0Service.getUserInfo(accessToken, userInfoUrl)
 
@@ -29,18 +28,18 @@ export default class Auth0UserProvider implements JwtUserProviderContract<UserGu
       ? this.createUserForGuard({
           authId: auth0User.sub,
           email: auth0User.email,
-        })
+        } as User)
       : null
   }
 
-  async createUserForGuard(user: UserGuard): Promise<JwtGuardUser<UserGuard>> {
+  async createUserForGuard(user: User): Promise<JwtGuardUser<User>> {
     return {
       getId: () => user.authId,
       getOriginal: () => user,
     }
   }
 
-  async createLocalUser(userInfo: UserInfo): Promise<JwtGuardUser<UserGuard>> {
+  async createLocalUser(userInfo: UserInfo): Promise<JwtGuardUser<User>> {
     let _localUser: User | null = null
 
     const role = await Role.findByOrFail('name', 'inviter')

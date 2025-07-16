@@ -1,5 +1,6 @@
 import { inject } from '@adonisjs/core'
 import Client from '#models/client'
+import { ClientCreateDto } from '#dtos/client'
 
 @inject()
 export default class ClientsService {
@@ -9,5 +10,12 @@ export default class ClientsService {
     _client.merge({ package: selectedPlan })
 
     return _client.save()
+  }
+
+  async store(client: ClientCreateDto) {
+    return Client.create({
+      name: client.name,
+      externalId: crypto.randomUUID(),
+    })
   }
 }

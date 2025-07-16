@@ -1,6 +1,6 @@
 import { Exception } from '@adonisjs/core/exceptions'
 
-interface ExceptionBody {
+export interface ExceptionBody {
   code: string
   status: number
   error: {

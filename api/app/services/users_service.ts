@@ -1,5 +1,5 @@
 import User from '#models/user'
-import type { UserUpdateDto } from '../dtos/user.js'
+import type { UserCreateDto, UserUpdateDto } from '#dtos/user'
 
 export default class UserService {
   show(authId: string) {
@@ -8,6 +8,10 @@ export default class UserService {
 
   findBy(filters: any) {
     return User.query().where(filters)
+  }
+
+  async store(user: UserCreateDto) {
+    return User.create(user)
   }
 
   async signUp(authId: string, updateDto: UserUpdateDto) {

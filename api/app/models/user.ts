@@ -25,9 +25,9 @@ export default class User extends BaseModel {
   /**
    * The current status of the user.
    *
-   * - `new`: Created account on auth0, but not sign up flow
+   * - `new`: Created account on auth0, but hasn't logged in
    * - `invited`: Invited by admin, but not accepted
-   * - `active`: The user has accepted the invitation and is active.
+   * - `active`: The user has accepted the invitation and logged in
    * - `inactive`: The user account is temporarily disabled.
    * - `archived`: The user is no longer in use and has been archived.
    */
@@ -39,9 +39,6 @@ export default class User extends BaseModel {
 
   @column()
   declare authId: string
-
-  @column()
-  declare timezone: string
 
   @column()
   declare invitedBy: number | null
