@@ -6,6 +6,7 @@ import { inviteUserValidator } from '#validators/invite'
 import { InviteUserDto } from '../dtos/invite.js'
 import Auth0Service from '#services/auth0_service'
 import EmailService from '#services/email_service'
+import InvitesService from '#services/invites_service'
 
 @inject()
 export default class InvitesController {
@@ -13,7 +14,8 @@ export default class InvitesController {
     public userService: UserService,
     public clientsService: ClientsService,
     public auth0Service: Auth0Service,
-    public emailService: EmailService
+    public emailService: EmailService,
+    public invitesService: InvitesService
   ) {}
 
   async invite({ response, request }: HttpContext) {
@@ -45,14 +47,27 @@ export default class InvitesController {
       // 4. Send password reset email
       const ticket = await this.auth0Service.sendTicket(auth0User)
 
-      await this.emailService.send({
+      const resendResponse = await this.emailService.send({
         to: 'philipimperato@gmail.com',
         subject: 'Password Reset',
         from: 'delivered@resend.dev',
         html: ticket.ticket,
       })
 
-      // 5. Return user
+      if (!resendResponse) {
+        return response.status(500).json({
+          code: 'EMAIL_SEND_FAILED',
+          error: 'Failed to send email',
+        })
+      }
+
+      // 6. Keep local record of invites
+      await this.invitesService.store({
+        authId: auth0User.user_id,
+        email: validated.email,
+        ticketUrl: ticket.ticket,
+        resendId: resendResponse.id,
+      })
 
       return localUser
     } else {

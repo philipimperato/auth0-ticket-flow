@@ -6,3 +6,10 @@ export type InviteUserDto = {
   lastName: string
   zipCode: string
 }
+
+export type CreateInviteDto = {
+  authId: string
+  email: string
+  ticketUrl: string
+  resendId: string
+}

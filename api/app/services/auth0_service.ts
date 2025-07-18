@@ -80,7 +80,7 @@ export default class Auth0Service {
       mark_email_as_verified: false,
       includeEmailInRedirect: true,
       user_id: auth0User.user_id,
-      result_url: 'http://localhost:5002',
+      result_url: 'http://localhost:5002/login',
     }
 
     const ticketResponse = await fetch(`${this.baseUrl}/api/v2/tickets/password-change`, {

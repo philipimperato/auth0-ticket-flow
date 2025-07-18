@@ -1,7 +1,7 @@
 export default defineNuxtRouteMiddleware((to) => {
   const { user, loggedIn } = useUserSession();
 
-  if (to.path === "/") {
+  if (to.path === "/" || to.meta.auth === false) {
     return;
   }
 
