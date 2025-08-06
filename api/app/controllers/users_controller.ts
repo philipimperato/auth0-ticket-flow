@@ -1,7 +1,7 @@
+import type { HttpContext } from '@adonisjs/core/http'
+import { inject } from '@adonisjs/core'
 import UserService from '#services/users_service'
 import ClientsService from '#services/clients_service'
-import { inject } from '@adonisjs/core'
-import type { HttpContext } from '@adonisjs/core/http'
 import { UserUpdateDto } from '../dtos/user.js'
 import { signUpValidator } from '#validators/user'
 

@@ -2,6 +2,13 @@ import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
 
 router.resource('roles', () => import('#controllers/roles_controller'))
+
+router
+  .group(() => {
+    router.post('/invite', '#controllers/invites_controller.invite')
+  })
+  .prefix('/api')
+
 router
   .group(() => {
     router.patch('signup', '#controllers/users_controller.signUp')

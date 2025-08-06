@@ -1,11 +1,10 @@
 import { test } from '@japa/runner'
 import { HttpContextFactory } from '@adonisjs/core/factories/http'
 import { Auth0Guard } from '#auth/guards/auth0'
-import { Auth0UserProvider } from '#auth/providers/auth0_user_provider'
+import Auth0UserProvider from '#auth/providers/auth0_user_provider'
 import nock from 'nock'
 import jwt from 'jsonwebtoken'
 import { mockJwks } from '#tests/jwt-utils'
-import UserService from '#services/users_service'
 
 test.group('Auth0Guard', (group) => {
   let httpContext: any
@@ -24,7 +23,7 @@ test.group('Auth0Guard', (group) => {
     httpContext.request.header = (name: string) => {
       return httpContext.request.headers[name.toLowerCase()]
     }
-    userProvider = new Auth0UserProvider(new UserService())
+    userProvider = new Auth0UserProvider()
     guard = new Auth0Guard(httpContext, userProvider, testConfig)
   })
 

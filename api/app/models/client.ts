@@ -14,6 +14,9 @@ export default class Client extends BaseModel {
   declare slug: string
 
   @column()
+  declare timezone: string
+
+  @column()
   declare externalId: string
 
   @column()

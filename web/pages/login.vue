@@ -1,8 +1,8 @@
 <script setup lang="ts">
-definePageMeta({ layout: "center-card", middleware: [] });
+definePageMeta({ layout: "center-card", auth: false });
 
 const navigateToLogin = () => {
-  window.location.href = "/auth/auth0";
+  window.location.href = `/auth/auth0?login_hint=${encodeURIComponent("philipimperato@gmail.com")}`;
 };
 
 const navigateToRegister = () => {

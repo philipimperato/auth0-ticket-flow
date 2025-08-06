@@ -13,7 +13,6 @@ export default class extends BaseSchema {
       table.integer('client_id').unsigned().notNullable()
 
       table.uuid('external_id')
-      table.string('timezone')
 
       table
         .enum('status', ['new', 'invited', 'active', 'inactive', 'archived'])
